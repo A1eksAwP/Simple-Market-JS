@@ -326,17 +326,11 @@ function renderMyCatalog(){
 for (let i = 0; i < catalog.length; i++) {
     let createNewProduct = document.createElement("p");
     let createNewGallery = document.createElement("div");
-    let createNewImage = document.createElement("img");
     let createBuyButton = document.createElement("button");
     let createNewDivByID = document.createElement("div");
     let createStockCount = document.createElement("li")
         createNewDivByID.className = `product${catalog[i].id} products`
         createNewProduct.textContent = `Название: ${catalog[i].name}; цена за 1${catalog[i].units}: ${FloatDisplayPrice(catalog[i].price)}`;
-        createNewImage.id = `${Math.floor(Math.random()*1000)}`
-        createNewImage.src = `https://picsum.photos/id/${createNewImage.id}/180/180`
-        //createNewImage.src = `https://loremflickr.com/180/180/food`
-        createNewImage.alt = `Рандомная картинка`
-        createNewImage.className = `smallImg${i+1}`
         createNewGallery.className = `galleryProduct${i+1} gallery`
         createBuyButton.textContent = `${catalog[i].price.toFixed(2)}руб | добавить в корзину`;
         createBuyButton.id = `button${catalog[i].id}`
@@ -346,11 +340,30 @@ for (let i = 0; i < catalog.length; i++) {
         document.querySelector('.catalog').appendChild(createNewDivByID);
         document.querySelector(`.product${i+1}`).appendChild(createNewProduct);
         document.querySelector(`.product${i+1}`).appendChild(createNewGallery);
-        document.querySelector(`.galleryProduct${i+1}`).appendChild(createNewImage);
         document.querySelector(`.product${i+1}`).appendChild(createBuyButton);
         document.querySelector(`.product${i+1}`).appendChild(createStockCount);
         let button = document.getElementById(`button${i+1}`)
         button.addEventListener('click',onButtonClickCatalog)
+
+        //Я пытался сделать в этом блоке так, чтобы при ошибке загрузки картинки ее src URL поменялся на существующий, но не получилось..
+        //При этом функция errorLoadingImage действительно выводит сообщения об ошибках
+        for (let j = 1; j<6; j++){
+            let createNewImage = document.createElement("img");
+        //while(createNewImage.onload){
+        createNewImage.id = `${Math.floor(Math.random()*1000)}`
+        createNewImage.src = `https://picsum.photos/id/${createNewImage.id}/180/180`
+        createNewImage.onerror = errorLoadingImage
+        if (errorLoadingImage) {
+               // debugger 
+                createNewImage.id = `${Math.floor(Math.random()*1000)}`
+                createNewImage.src = `https://picsum.photos/id/${createNewImage.id}/180/180`
+        } 
+        //}
+        createNewImage.alt = `Рандомная картинка`
+        createNewImage.className = `smallImg${i+1}-${j}`
+        document.querySelector(`.galleryProduct${i+1}`).appendChild(createNewImage);
+        }
+        
         if (i==catalog.length-1) {
             let createLastDIV = document.createElement("div");
             createNewProduct = document.createElement("h2");
@@ -363,6 +376,8 @@ for (let i = 0; i < catalog.length; i++) {
         }
     }              
 }
+
+function errorLoadingImage(){console.log("изображение не прогрузилось")}
 
 //Функция отрисовки корзины
 function renderMyCart(){
