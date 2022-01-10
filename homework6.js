@@ -352,6 +352,7 @@ for (let i = 0; i < catalog.length; i++) {
         //while(createNewImage.onload){
         createNewImage.id = `${Math.floor(Math.random()*1000)}`
         createNewImage.src = `https://picsum.photos/id/${createNewImage.id}/180/180`
+        createNewImage.dataset.path = `img180px`
         createNewImage.onerror = errorLoadingImage
         if (errorLoadingImage) {
                // debugger 
@@ -460,11 +461,43 @@ function onOpenMiniatureImage(event){
 }
 
 function init(){
+        debugger
     const images = document.querySelectorAll('.gallery > img')
+        const modalOverlay = document.querySelector('.modal-overlay');
+        const modals = document.querySelectorAll('.modal');
+
+
+        images.forEach((element) => {
+                element.addEventListener('click', (e) => {
+                        let path = e.currentTarget.getAttribute('data-path');
+                        let pathimg = e.currentTarget.getAttribute('id')
+                        modals.forEach((el) => {
+                                el.classList.remove('modal--visible');
+                        });
+        
+                        document.querySelector(`[data-target="${path}"]`).classList.add('modal--visible');
+                        document.querySelector(`.fullImg`).src = `https://picsum.photos/id/${pathimg}/800/800`
+                        modalOverlay.classList.add('modal-overlay--visible');
+                });
+        });
+        
+        modalOverlay.addEventListener('click', (e) => {
+                //console.log(e.target);
+                if (e.target == modalOverlay) {
+                        modalOverlay.classList.remove('modal-overlay--visible');
+                        modals.forEach((el) => {
+                                el.classList.remove('modal--visible');
+                        });
+                }
+        });
+
     for (let picture of images){
         picture.addEventListener('click',onOpenMiniatureImage)
     }
 }
+
+
+
 
 
 renderMyCatalog()
